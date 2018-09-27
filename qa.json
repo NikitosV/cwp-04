@@ -1,0 +1,17 @@
+[{
+  "qa": "Who am i ?",
+  "goodAnsBad": ["Nikita", "Vashkov"]
+},
+  {
+    "qa": "What year now ?",
+    "goodAnsBad": ["2018", "2019"]
+  },
+  {
+    "qa": "Where are you live?",
+    "goodAnsBad": ["Moscow", "Minsk"]
+  },
+  {
+    "qa": "Do you like NodeJS?",
+    "goodAnsBad": ["Yes", "No"]
+  }
+]
