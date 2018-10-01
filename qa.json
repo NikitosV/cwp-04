@@ -1,17 +1,22 @@
-[{
-  "qa": "Who am i ?",
-  "goodAnsBad": ["Nikita", "Vashkov"]
-},
+[
   {
-    "qa": "What year now ?",
-    "goodAnsBad": ["2018", "2019"]
+    "question": "lol kek...",
+    "goodAns": "chebyrek",
+    "badAns": "..."
   },
   {
-    "qa": "Where are you live?",
-    "goodAnsBad": ["Moscow", "Minsk"]
+    "question": "Is Josh Snow a King of the North?",
+    "goodAns": "True",
+    "badAns": "False"
   },
   {
-    "qa": "Do you like NodeJS?",
-    "goodAnsBad": ["Yes", "No"]
+    "question": "Do you use callbacks in callbacks?",
+    "goodAns": "True",
+    "badAns": "False"
+  },
+  {
+    "question": "2+2*2=6",
+    "goodAns": "True",
+    "badAns": "False"
   }
 ]

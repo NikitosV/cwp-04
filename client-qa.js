@@ -1,67 +1,58 @@
-const net = require("net");
-const fs = require("fs");
+const net = require('net');
+const fs = require('fs');
+const shuffle = require('shuffle-array');
 const port = 8124;
+const startString = 'QA';
+const good = 'ACK';
+const bad = 'DEC';
+let index = -1;
+let questions = [];
 
 const client = new net.Socket();
-
-let QA;
-let ans;
-let curQA = 0;
-
 client.setEncoding('utf8');
 
-client.connect(port, function() {
-    console.log('Connected');
-    client.write("QA");
+client.connect({port: port, host: '127.0.0.1'}, (err) => {
+    if(err) console.error("Соединение не установлено");
+    fs.readFile("qa.json", (err, text) => {
+        if (err) console.error("Невозможно прочитать файл")
+        else {
+            console.log("Connected")
+            questions = JSON.parse(text);
+            shuffle(questions);
+            client.write(startString);
+        }
+    });
 });
 
-client.on('data', function(data) {
-    if (data == "ACK") {
-        fs.readFile("qa.json", (err, data) => {
-            if (err) {
-                console.log("Error read qa.json");
-                client.destroy();
-            } else {
-                QA = JSON.parse(data);
-                QA = shuffle(QA);
-                sendQA()
-            }
-        });
-    } else if (data === "DEC") {
+client.on('data', (data) => {
+    if (data === bad){
+        console.log("Not connected");
         client.destroy();
-    } else {
-        ans = parseInt(data);
-        console.log("Quastion - " + QA[curQA - 1].qa + " server ansver " + QA[curQA - 1].goodAnsBad[ans]);
-        console.log("Good answer " + QA[curQA - 1].goodAnsBad[0]);
-        sendQA();
-
     }
-    //client.destroy();
+
+    if (data === good)
+        sendQuestion();
+
+    if (data !== good && data !== bad) {
+        let qst = questions[index];
+        let answer = qst.good;
+        console.log(`\nQuestion: ${qst.question}`);
+        console.log(`---Right answer: ${answer}`);
+        console.log(`---Server's answer: ${data}`);
+        console.log('---Result: ' + (data === answer ? 'Right answer!': 'Wrong answer!'));
+        sendQuestion();
+    }
 });
 
-client.on('close', function() {
+client.on('close', function () {
     console.log('Connection closed');
 });
 
-function sendQA() {
-    if (curQA < QA.length) {
-        client.write(QA[curQA++].qa);
-    } else {
+function sendQuestion() {
+    if (index < questions.length - 1) {
+        let qst = questions[++index].question;
+        client.write(qst);
+    }
+    else
         client.destroy();
-    }
-}
-
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        let rann = getRandomInt(0, i);
-        console.log(rann);
-        t = arr[rann];
-        arr[rann] = arr[i];
-        arr[i] = t;
-    }
-    return arr;
-}
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
